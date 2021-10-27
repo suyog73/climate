@@ -1,3 +1,4 @@
+import 'package:climate/screens/city_screen.dart';
 import 'package:climate/services/weather.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -26,25 +27,34 @@ class _LocationScreenState extends State<LocationScreen> {
 
   @override
   void initState() {
+    super.initState();
     updateUi(widget.locationWeather);
   }
 
   void updateUi(dynamic weatherData) {
-    double tp = weatherData['main']['temp'];
-    temp = tp.toInt();
-    double tpMin = weatherData['main']['temp_min'];
-    tempMax = tpMin.toInt();
-    double tpMax = weatherData['main']['temp_max'];
-    tempMin = tpMax.toInt();
-    double tpFeel = weatherData['main']['feels_like'];
-    feelsLike = tpFeel.toInt();
+    setState(() {
+      if (weatherData == null) {
+        weatherMsg = 'Unable to get weather  data';
+        return;
+      }
+      double tp = weatherData['main']['temp'];
+      temp = tp.toInt();
+      double tpMin = weatherData['main']['temp_min'];
+      tempMax = tpMin.toInt();
+      double tpMax = weatherData['main']['temp_max'];
+      tempMin = tpMax.toInt();
+      double tpFeel = weatherData['main']['feels_like'];
+      feelsLike = tpFeel.toInt();
 
-    var condition = weatherData['weather'][0]['id'];
-    weatherIcon = weather.getWeatherIcon(condition);
-    city = weatherData['name'];
-    description = weatherData['weather'][0]['description'];
+      var condition = weatherData['weather'][0]['id'];
+      weatherIcon = weather.getWeatherIcon(condition);
+      city = weatherData['name'];
+      description = weatherData['weather'][0]['description'];
 
-    weatherMsg = weather.getMessage(temp);
+      weatherMsg = weather.getMessage(temp);
+
+      // print('temp $city');
+    });
   }
 
   @override
@@ -61,9 +71,52 @@ class _LocationScreenState extends State<LocationScreen> {
         ),
         child: Column(
           children: [
+            SafeArea(
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    InkWell(
+                      onTap: () async {
+                        var weatherData1 = await weather.getLocationWeather();
+                        updateUi(weatherData1);
+                      },
+                      child: const Icon(
+                        FontAwesomeIcons.locationArrow,
+                        color: Colors.white,
+                        size: 40.0,
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () async {
+                        var inputCity = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return const CityScreen();
+                            },
+                          ),
+                        );
+                        if (inputCity != null) {
+                          var weatherData =
+                              await weather.getCityWeather(inputCity);
+                          updateUi(weatherData);
+                        }
+                      },
+                      child: const Icon(
+                        FontAwesomeIcons.city,
+                        color: Colors.white,
+                        size: 40.0,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
             const Expanded(
               child: Padding(
-                padding: EdgeInsets.only(top: 100.0),
+                padding: EdgeInsets.only(top: 30.0),
                 child: Text(
                   'Weather',
                   style: TextStyle(
@@ -74,7 +127,7 @@ class _LocationScreenState extends State<LocationScreen> {
               ),
             ),
             Expanded(
-              flex: 2,
+              flex: 3,
               child: Container(
                 margin: const EdgeInsets.all(25),
                 decoration: BoxDecoration(
@@ -82,7 +135,7 @@ class _LocationScreenState extends State<LocationScreen> {
                   color: const Color(0xFF1A1E20),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(18.0, 48.0, 18.0, 18.0),
+                  padding: const EdgeInsets.fromLTRB(18.0, 38.0, 18.0, 18.0),
                   child: Column(
                     children: [
                       Expanded(
@@ -202,7 +255,8 @@ class _LocationScreenState extends State<LocationScreen> {
               child: Container(),
             ),
           ],
-        ) /* add child content here */,
+        ) /* add child content here */
+        ,
       ),
     );
   }
