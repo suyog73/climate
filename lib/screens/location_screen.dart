@@ -34,7 +34,14 @@ class _LocationScreenState extends State<LocationScreen> {
   void updateUi(dynamic weatherData) {
     setState(() {
       if (weatherData == null) {
-        weatherMsg = 'Unable to get weather  data';
+        weatherMsg = 'Unable to get weather data';
+        city = 'Unspecified';
+        weatherIcon = FontAwesomeIcons.frown;
+        temp = 0;
+        tempMin = 1;
+        tempMax = -2;
+        feelsLike = 0;
+        description = '';
         return;
       }
       double tp = weatherData['main']['temp'];
@@ -73,7 +80,7 @@ class _LocationScreenState extends State<LocationScreen> {
           children: [
             SafeArea(
               child: Container(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.fromLTRB(20.0, 20.0, 30.0, 0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -135,103 +142,100 @@ class _LocationScreenState extends State<LocationScreen> {
                   color: const Color(0xFF1A1E20),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(18.0, 38.0, 18.0, 18.0),
+                  padding: const EdgeInsets.fromLTRB(18.0, 28.0, 18.0, 18.0),
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Expanded(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                const Icon(
-                                  Icons.location_on_outlined,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.location_on_outlined,
+                                color: Colors.white,
+                              ),
+                              const SizedBox(width: 5),
+                              Text(
+                                city,
+                                style: const TextStyle(
+                                    color: Colors.white, fontSize: 18.0),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.watch_later_outlined,
+                                color: Colors.white,
+                              ),
+                              const SizedBox(width: 5),
+                              Text(
+                                DateFormat('dd/MM/yyyy').format(
+                                  DateTime.now(),
+                                ),
+                                style: const TextStyle(
                                   color: Colors.white,
                                 ),
-                                const SizedBox(width: 5),
-                                Text(
-                                  city,
-                                  style: const TextStyle(
-                                      color: Colors.white, fontSize: 18.0),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                const Icon(
-                                  Icons.watch_later_outlined,
-                                  color: Colors.white,
-                                ),
-                                const SizedBox(width: 5),
-                                Text(
-                                  DateFormat('dd/MM/yyyy').format(
-                                    DateTime.now(),
-                                  ),
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
-                      Expanded(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Icon(
-                                  weatherIcon,
-                                  color: Colors.white,
-                                  size: 60.0,
-                                ),
-                                const SizedBox(width: 20.0),
-                                Text(
-                                  '$temp°',
-                                  style: const TextStyle(
-                                      color: Colors.yellowAccent,
-                                      fontSize: 55.0),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Text(
-                                      description,
-                                      style: const TextStyle(
-                                        color: Color(0xFF939292),
-                                        fontSize: 20.0,
-                                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                weatherIcon,
+                                color: Colors.white,
+                                size: 60.0,
+                              ),
+                              const SizedBox(width: 20.0),
+                              Text(
+                                '$temp°',
+                                style: const TextStyle(
+                                    color: Colors.yellowAccent, fontSize: 55.0),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    description,
+                                    style: const TextStyle(
+                                      color: Color(0xFF939292),
+                                      fontSize: 20.0,
                                     ),
-                                    Text(
-                                      '${tempMin - 1}°/ ${tempMax + 2}°',
-                                      style: const TextStyle(
-                                        color: Color(0xFF939292),
-                                        fontSize: 20.0,
-                                      ),
+                                  ),
+                                  Text(
+                                    '${tempMin - 1}°/ ${tempMax + 2}°',
+                                    style: const TextStyle(
+                                      color: Color(0xFF939292),
+                                      fontSize: 20.0,
                                     ),
-                                    Text(
-                                      'Feels like $feelsLike°',
-                                      style: const TextStyle(
-                                        color: Color(0xFF939292),
-                                        fontSize: 20.0,
-                                      ),
+                                  ),
+                                  Text(
+                                    'Feels like $feelsLike°',
+                                    style: const TextStyle(
+                                      color: Color(0xFF939292),
+                                      fontSize: 20.0,
                                     ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
-                      Expanded(
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 28.0),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -250,13 +254,11 @@ class _LocationScreenState extends State<LocationScreen> {
                 ),
               ),
             ),
-            Expanded(
-              flex: 1,
-              child: Container(),
-            ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.25,
+            )
           ],
-        ) /* add child content here */
-        ,
+        ),
       ),
     );
   }
